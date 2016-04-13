@@ -17,15 +17,10 @@ class TaskCurl{
     private $_response;
     private $_http_info;
 
-    protected $default_headers = [
-        'Content-Type: application/x-www-form-urlencoded',
-    ];
-
     public function __construct($url, $connect_timeout_ms = 300, $receive_timeout = 3){
         $this->_ch = curl_init($url);
         curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_HEADER, false);
-        curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $this->default_headers);
         curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_TIMEOUT, $receive_timeout);
         if ($connect_timeout_ms > 0){
@@ -77,7 +72,7 @@ class TaskCurl{
     }
 
     public function setHeader(array $headers){
-        curl_setopt($this->_ch, CURLOPT_HTTPHEADER, array_merge($this->default_headers, $headers));
+        curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headers);
     }
 
     public function setCurlOpt($option, $value){
