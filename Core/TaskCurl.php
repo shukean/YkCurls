@@ -11,6 +11,8 @@ class TaskCurl{
     private $_ch;
     private $_ch_key;
     private $_conn_error_retry_times = 2;
+    private $_conn_times = 0;
+    private $_opts = [];
 
     private $_errno;
     private $_error;
@@ -61,31 +63,38 @@ class TaskCurl{
     }
 
     public function connErrorRetryEnable(){
-        static $_retry_time = 0;
-        $_retry_time ++;
-        return $_retry_time < $this->_conn_error_retry_times;
+        $this->_conn_times ++;
+        return $this->_conn_times < $this->_conn_error_retry_times;
     }
 
     public function setPost($post_data){
-        curl_setopt($this->_ch, CURLOPT_POST, true);
-        curl_setopt($this->_ch, CURLOPT_POSTFIELDS, $post_data);
+        $this->setCurlOpt($this->_ch, CURLOPT_POST, true);
+        $this->setCurlOpt($this->_ch, CURLOPT_POSTFIELDS, $post_data);
     }
 
     public function setHeader(array $headers){
-        curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $headers);
+        $this->setCurlOpt(CURLOPT_HTTPHEADER, $headers);
     }
 
     public function setCurlOpt($option, $value){
         curl_setopt($this->_ch, $option, $value);
+        $this->_opts[$option] = $value;
     }
 
     public function setCurlOpts(array $options){
         curl_setopt_array($this->_ch, $options);
+        foreach ($options as $option => $value){
+            $this->_opts[$option] = $value;
+        }
+    }
+
+    public function getCurlOptValue($key){
+        return isset($this->_opts[$key]) ? $this->_opts[$key] : null;
     }
 
     public function setCurlExecInfo($info){
         $this->_errno = $info['result'];
-        $this->_error = curl_strerror($this->_errno);
+        $this->_error = curl_error($info['handle']); //curl_strerror($this->_errno);
         $this->_response = curl_multi_getcontent($info['handle']);
         $this->_http_info = curl_getinfo($info['handle']);
     }
