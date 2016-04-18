@@ -68,8 +68,8 @@ class TaskCurl{
     }
 
     public function setPost($post_data){
-        $this->setCurlOpt($this->_ch, CURLOPT_POST, true);
-        $this->setCurlOpt($this->_ch, CURLOPT_POSTFIELDS, $post_data);
+        $this->setCurlOpt(CURLOPT_POST, true);
+        $this->setCurlOpt(CURLOPT_POSTFIELDS, $post_data);
     }
 
     public function setHeader(array $headers){
