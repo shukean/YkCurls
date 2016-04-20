@@ -23,7 +23,6 @@ class TaskCurl{
         $this->_ch = curl_init($url);
         curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_HEADER, false);
-        curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->_ch, CURLOPT_TIMEOUT, $receive_timeout);
         if ($connect_timeout_ms > 0){
             curl_setopt($this->_ch, CURLOPT_CONNECTTIMEOUT_MS, $connect_timeout_ms);
