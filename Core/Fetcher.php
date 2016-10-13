@@ -20,12 +20,26 @@ class Fetcher{
      * @var max exec ch number as same time
      */
     private $_max_exec_ch_num = 0;
+    /**
+     * @var call log funtion, arguments like: line, file, message, code, extra_array
+     */
+    private $_logger = null;
     private $_task_wait_pool = [];
 
-    public function __construct($max_exec_ch_num = 0){
+    public function __construct($max_exec_ch_num = 0, callable $logger = null){
         $this->_mch = curl_multi_init();
-        curl_multi_setopt($this->_mch, CURLMOPT_PIPELINING, 1);
         $this->_max_exec_ch_num = $max_exec_ch_num;
+        $this->_logger = $logger;
+    }
+
+    public function trace_log($line, $file, $message, $code, array $extra = []){
+        if (($logger = $this->_logger) !== null){
+            $logger($line, $file, $message, $code, $extra);
+        }
+    }
+
+    public function setMultiOpt($option, $value){
+        curl_multi_setopt($this->_mch, $option, $value);
     }
 
     public function addTask(TaskCurl $task){
@@ -79,6 +93,7 @@ RESET:
                         goto RESET;
                     }
                 }else{
+                    $this->trace_log(__LINE__, __FILE__, 'curl info read fail', $info['result'], $info);
                     curl_multi_remove_handle($this->_mch, $ch);
                     curl_multi_add_handle($this->_mch, $ch);
                     goto RESET;
@@ -125,6 +140,7 @@ RESET:
                         goto RESET;
                     }
                 }else{
+                    $this->trace_log(__LINE__, __FILE__, 'curl info read fail', $info['result'], $info);
                     curl_multi_remove_handle($this->_mch, $ch);
                     curl_multi_add_handle($this->_mch, $ch);
                     goto RESET;
