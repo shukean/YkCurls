@@ -22,8 +22,8 @@ class TaskCurl{
     public function __construct($url, $connect_timeout_ms = 300, $receive_timeout = 3){
         $this->_ch = curl_init($url);
         curl_setopt($this->_ch, CURLOPT_HEADER, false);
-        curl_setopt($this->_ch, CURLOPT_HTTPHEADER, $this->default_headers);
         curl_setopt($this->_ch, CURLOPT_TIMEOUT, $receive_timeout);
+        curl_setopt($this->_ch, CURLOPT_RETURNTRANSFER, true);
         if ($connect_timeout_ms > 0){
             curl_setopt($this->_ch, CURLOPT_CONNECTTIMEOUT_MS, $connect_timeout_ms);
             if ($connect_timeout_ms < 1000){
